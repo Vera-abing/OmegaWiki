@@ -1,6 +1,6 @@
 ---
-description: Compile a paper outline from the idea graph — evidence map → narrative structure → section plan + figure plan + citation plan, Review LLM review mandatory
-argument-hint: <idea-slugs...> --venue <ICLR|NeurIPS|ICML|ACL|CVPR|IEEE> [--title <working-title>]
+description: 从 idea 图编译论文大纲 — 证据图谱 → 叙事结构 → 章节大纲（细分到三级标题）→ 引文计划，Review LLM 审查必选。支持社科期刊和理论路径。
+argument-hint: <idea-slugs...> --venue <venue-name> [--title <working-title>]
 ---
 
 # /paper-plan
@@ -17,10 +17,13 @@ argument-hint: <idea-slugs...> --venue <ICLR|NeurIPS|ICML|ACL|CVPR|IEEE> [--titl
 ## Inputs
 
 - `ideas`: list of target idea slugs (space-separated)
-  - each idea should have `status: validated` or be `in_progress` with at least one `succeeded` experiment
-  - if `proposed` or `invalidated` ideas are included, warn but continue
+  - Theoretical path: idea should have `status: outlining`
+  - Empirical path: idea should have `status: analysis`
+  - If status is earlier than these, warn but continue
 - `--venue` (required): target venue, determines page limit and format requirements
-  - supported: `ICLR` / `NeurIPS` / `ICML` / `ACL` / `CVPR` / `IEEE`
+  - ML/CS conferences: `ICLR` / `NeurIPS` / `ICML` / `ACL` / `CVPR` / `IEEE`
+  - Social science journals: free text, e.g. `教育研究`, `职业技术教育`, `JVET`, `Compare`
+  - If omitted and idea page has `target_venue` set, use that value
 - `--title` (optional): working title; if omitted, generated from target ideas
 
 ## Outputs
@@ -72,9 +75,10 @@ argument-hint: <idea-slugs...> --venue <ICLR|NeurIPS|ICML|ACL|CVPR|IEEE> [--titl
 5. Load relevant edges from `wiki/graph/edges.jsonl` to build relationships between ideas
 
 **Validation**:
-- If any target idea has `status: proposed`: warn "idea is unvalidated; paper may lack evidence support"
-- If any target idea has empty `novelty_score` OR `novelty_score <= 2`: warn "idea novelty is thin; consider running `/novelty` first"
-- If no `linked_experiments` resolve to a `succeeded` outcome for any target idea: error "at least one supporting experiment is required to plan a paper"
+- If any target idea has `status: proposed` or `assessed`: warn "idea is at an early stage; paper plan may lack sufficient development"
+- If any target idea has empty `novelty_score` OR `novelty_score <= 2`: warn "idea novelty is unverified; consider running `/novelty` first"
+- If idea `article_type` is `empirical` and `## 数据与分析结果` section is empty: warn "empirical data not yet recorded; outline may be preliminary"
+- If idea `article_type` is `theoretical` and status is not `outlining`: warn "theoretical idea should reach outlining status before paper planning"
 
 ### Step 2: Compile Evidence Map from Wiki
 
@@ -114,6 +118,7 @@ Follow the hourglass principle in `shared-references/academic-writing.md`:
 ### Step 4: Generate Section Outline
 
 Generate the outline according to venue format requirements; each section includes:
+For social science papers, use Chinese section names where appropriate. Sub-sections must be expanded to **third-level headings (###)** for each main section.
 
 ```markdown
 ## 1. Introduction (1.5 pages)
@@ -352,8 +357,8 @@ Revise the outline based on Review LLM feedback (add sections, adjust page budge
 
 ## Constraints
 
-- **--venue is required**: page limits and format requirements vary significantly by venue; cannot be omitted
-- **At least one experiment evidence**: purely theoretical ideas are insufficient for an empirical paper; at least one supporting experiment is required
+- **--venue is required or inferable**: if not provided, check `target_venue` in the idea frontmatter; if neither exists, ask the user
+- **Theoretical papers do not require experiment evidence**: for `article_type: theoretical`, outline is derived from framework and literature synthesis
 - **Page budget must be feasible**: total section pages <= venue main-body limit; otherwise adjust (compress or move to appendix)
 - **Review LLM review is mandatory**: cannot be skipped; catching problems at the outline stage has the lowest cost
 - **All citations from wiki**: every paper in the citation plan must exist in wiki/papers/
@@ -364,8 +369,9 @@ Revise the outline based on Review LLM feedback (add sections, adjust page budge
 
 ## Error Handling
 
-- **Insufficient idea status**: if all ideas are `proposed`, error "ideas are unvalidated; run experiments first"
-- **No experiment evidence**: error "at least one experimental result is required"; suggest running /exp-design + /exp-run first
+- **Insufficient idea status**: if all ideas are `proposed`, warn "ideas are at early stage; consider completing /pub-assess and /frame first"
+- **Missing empirical data (empirical path)**: warn "empirical data section is empty; complete data collection and update the idea page first"
+- **Missing framework (theoretical path)**: warn "analytical framework section is empty; run /frame first"
 - **Insufficient wiki papers**: if the citation plan has fewer than 5 wiki papers, warn "related work coverage is insufficient; consider /ingest of more papers first"
 - **Page budget exceeded**: automatically move lower-priority sections to appendix plan; report the adjustment
 - **Review LLM unavailable**: fall back to Claude self-review; report annotated "single-model review — cross-model verification unavailable"

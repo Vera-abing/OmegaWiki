@@ -38,3 +38,16 @@ Wikilinks: `[[slug]]`. Slugs are lowercase, hyphen-separated, no spaces.
 ## Python Environment
 
 Prefer in order: `.venv/bin/python` (`.venv/Scripts/python.exe` on Windows) → active conda env → `python3` (`python` on Windows). Tools auto-load API keys from `~/.env` and project-root `.env` via `tools/_env.py`.
+
+## User Context
+
+Read `context/user.md` before any task involving:
+- The user's identity, research background, or goals
+- Recommending papers or research directions
+- Writing, reviewing, or framing content in the user's voice
+- Any skill that benefits from knowing the user's domain expertise
+
+Read `context/template.md` before any writing task, including:
+- Drafting or editing grant applications (基金项目申请书)
+- Drafting or editing journal papers (any type)
+- Any skill that produces written research output (`/paper-draft`, `/paper-plan`, `/survey`, `/rebuttal`, `/ideate`)

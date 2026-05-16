@@ -53,6 +53,15 @@ raw/discovered/*
 raw/tmp/*
 !raw/tmp/.gitkeep
 
+# raw/data/ — 调研数据交接目录（目录本身追踪，数据文件不提交）
+raw/data/*.csv
+raw/data/*.xlsx
+raw/data/*.xls
+raw/data/*.json
+raw/data/*.txt
+raw/data/*.sav
+raw/data/*.dta
+
 # Wiki entity content (excluding scaffolds)
 wiki/papers/*
 !wiki/papers/.gitkeep

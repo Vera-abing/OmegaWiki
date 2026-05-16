@@ -79,24 +79,31 @@ ideas:
     title:              { type: str, required: true }
     slug:               { type: str, required: true }
     status:             { type: enum,
-                          values: [proposed, in_progress, tested, validated, failed],
+                          values: [proposed, assessed, framing, data_collection, analysis, outlining, writing, submitted, published, abandoned],
                           required: true, default: proposed }
+    article_type:       { type: enum, values: [empirical, theoretical] }
     origin:             { type: str, required: true }
     origin_gaps:        { type: list_link, to: [concepts, topics], default: [] }
     tags:               { type: list_str, required: true, default: [] }
     target_venue:       { type: str }
     novelty_score:      { type: int, range: [1, 5] }
     priority:           { type: int, range: [1, 5], required: true, default: 3 }
-    pilot_result:       { type: str }
-    failure_reason:     { type: str, required_when: { status: failed } }
-    linked_experiments: { type: list_link, to: experiments, default: [] }
+    abandon_reason:     { type: str, required_when: { status: abandoned } }
     date_proposed:      { type: date }
     date_resolved:      { type: date }
   lifecycle:
     transitions:
-      proposed:    [in_progress]
-      in_progress: [tested]
-      tested:      [validated, failed]
+      proposed:        [assessed, abandoned]
+      assessed:        [framing, abandoned]
+      framing:         [data_collection, outlining, abandoned]
+      data_collection: [analysis, abandoned]
+      analysis:        [writing, abandoned]
+      outlining:       [writing, abandoned]
+      writing:         [submitted, abandoned]
+      submitted:       [published, writing]
+    terminal:
+      published: true
+      abandoned: true
 
 methods:
   dir: wiki/methods/
@@ -105,8 +112,11 @@ methods:
     slug:           { type: str, required: true }
     type:
       type: enum
-      values: [architecture, training, inference, evaluation, data, benchmark,
-               system, optimization, prompting, protocol, other]
+      values: [survey, experiment, quasi_experiment, secondary_analysis,
+               measurement, interview, observation, case_study,
+               content_analysis, grounded_theory, mixed_methods,
+               meta_analysis, systematic_review, design_based_research,
+               action_research, other]
       required: true
       default: other
     tags:           { type: list_str, required: true, default: [] }

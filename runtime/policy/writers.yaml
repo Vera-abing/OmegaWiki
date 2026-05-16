@@ -41,10 +41,10 @@ fields:
   methods.child_methods:    { writers: [ingest, edit] }
 
   # Idea lifecycle and judgement scores.
-  ideas.status:             { writers: [ideate, exp-eval, refine] }
-  ideas.failure_reason:     { writers: [exp-eval] }
-  ideas.date_resolved:      { writers: [exp-eval] }
-  ideas.pilot_result:       { writers: [exp-eval] }
+  ideas.status:             { writers: [ideate, exp-eval, refine, frame, pub-assess] }
+  ideas.abandon_reason:     { writers: [ideate, frame, pub-assess] }
+  ideas.date_resolved:      { writers: [ideate] }
+  ideas.article_type:       { writers: [ideate, frame] }
   ideas.target_venue:       { writers: [ideate] }
   ideas.novelty_score:      { writers: [ideate, novelty] }
 

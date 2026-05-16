@@ -1,0 +1,40 @@
+# config/daily-arxiv.yml - daily arXiv recommendation preferences
+# Do not put secrets in this file.
+
+# inform: recommend and notify only.
+# auto-ingest: let /daily-arxiv invoke /ingest for high-confidence picks.
+mode: inform
+
+# Fresh-paper window and source categories.
+hours: 24
+categories: [econ.GN, econ.EM, physics.soc-ph]
+
+# Digest and auto-ingest caps.
+max_recommendations: 10
+max_auto_ingest: 1
+
+email:
+  enabled: true
+
+schedule:
+  enabled: true
+  cron: "17 0 * * *"
+
+profile:
+  # Infer interests from wiki/papers, wiki/topics, wiki/concepts,
+  # wiki/methods, wiki/ideas, and wiki/log.md — updated on every /ingest.
+  derive_from_wiki: true
+  positive_topics: []
+  negative_topics: []
+  positive_papers: []
+  negative_papers: []
+
+enrichment:
+  semantic_scholar: true
+  deepxiv: true
+  s2_anchor_limit: 5
+  s2_candidate_limit: 12
+  s2_recommendation_limit: 50
+  deepxiv_brief_limit: 8
+  deepxiv_trending_days: 7
+  deepxiv_trending_limit: 50
