@@ -18,7 +18,7 @@ email:
 
 schedule:
   enabled: true
-  cron: "17 0 * * *"
+  cron: "0 2 * * *"
 
 profile:
   # Infer interests from wiki/papers, wiki/topics, wiki/concepts,
